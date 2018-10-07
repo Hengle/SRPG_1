@@ -1,2 +1,0 @@
-# SRPG_1
-SRPG_ASTAR
