@@ -34,8 +34,7 @@ public class Block : MonoBehaviour {
 
         if(!DragCameraMove.Drag && !EventSystem.current.IsPointerOverGameObject())
         {
-            Grid.target = gameObject;
-            Grid.MovePlayer();
+            Grid.MovePlayer(transform);
         }
     }
     #endregion

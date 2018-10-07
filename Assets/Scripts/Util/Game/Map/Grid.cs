@@ -9,6 +9,8 @@ public class Grid : MonoBehaviour {
     private Transform Map;
     [SerializeField]
     private FollowCam Camera;
+    [SerializeField]
+    private GameObject obj_player;
 
     public bool displayGridGizmos;
     public LayerMask unwalkableMask;
@@ -21,9 +23,8 @@ public class Grid : MonoBehaviour {
 
     //[Header("[블록]")]
     public static List<GameObject> BlockList = new List<GameObject>();
-
-    public static GameObject target = null;
-    public static GameObject player;
+    
+    public static Unit player;
 
     void Awake()
     {
@@ -38,7 +39,8 @@ public class Grid : MonoBehaviour {
     private void CreatePlayer()
     {
         int blockIndex = 0;
-        player = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        GameObject prefab = Instantiate<GameObject>(obj_player, transform);
+        player = prefab.AddComponent<Unit>();
         player.transform.name = "Player";
         while(true)
         {
@@ -50,14 +52,13 @@ public class Grid : MonoBehaviour {
         }
         player.transform.position = new Vector3(BlockList[blockIndex].transform.position.x, BlockList[blockIndex].transform.position.y + (BlockList[blockIndex].transform.localScale.y/2) + 0.25f, BlockList[blockIndex].transform.position.z);
         player.transform.localScale = new Vector3(1, 0.25f, 1);
-        player.AddComponent<Unit>();
         Camera.target = player.transform;
     }
 
-    public static void MovePlayer()
+    public static void MovePlayer(Transform target)
     {
-        player.transform.GetComponent<Unit>().target = Grid.target.transform;
-        player.transform.GetComponent<Unit>().PlayerMove();
+        player.target = target;
+        player.PlayerMove();
     }
 
     public void SetMap()
@@ -124,7 +125,7 @@ public class Grid : MonoBehaviour {
 
                 if (blockindex >= BlockList.Count)
                     continue;
-                if (1f < Mathf.Abs(BlockList[blockindex].transform.localScale.y - BlockList[curblockindex].transform.localScale.y))
+                if (1f < Mathf.Abs(BlockList[blockindex].transform.localScale.y - BlockList[curblockindex].transform.localScale.y) || BlockList[blockindex].transform.localScale.y <= 0)
                 {
                     continue;
                 }
